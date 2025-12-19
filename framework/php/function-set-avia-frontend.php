@@ -2547,15 +2547,21 @@ if( ! function_exists( 'avia_targeted_link_rel' ) )
 	 */
 	function avia_targeted_link_rel( $text, $exec_call = true )
 	{
+		global $wp_version;
+
+		/**
+		 * WP 6.7+ deprecated wp_targeted_link_rel() with no replacement
+		 * Core now handles rel attributes automatically
+		 */
+		$wp_handles_rel = version_compare( $wp_version, '6.7', '>=' );
+
 		/**
 		 * For older WP versions we skip this feature
 		 */
-		if( ! function_exists( 'wp_targeted_link_rel' ) )
+		if( ! $wp_handles_rel && ! function_exists( 'wp_targeted_link_rel' ) )
 		{
 			return $text;
 		}
-
-		global $wp_version;
 
 		/**
 		 * WP changed the way it splits the attributes. '_' is not supported as a valid attribute and removes these attributes.
@@ -2564,7 +2570,7 @@ if( ! function_exists( 'avia_targeted_link_rel' ) )
 		 *
 		 * This might change in a future version of WP.
 		 */
-		if( version_compare( $wp_version, '5.3.1', '<' ) )
+		if( ! $wp_handles_rel && version_compare( $wp_version, '5.3.1', '<' ) )
 		{
 			return true === $exec_call ? wp_targeted_link_rel( $text ) : $text;
 		}
@@ -2602,7 +2608,11 @@ if( ! function_exists( 'avia_targeted_link_rel' ) )
 		if( version_compare( phpversion(), '5.3', '<' ) )
 		{
 			$text_trans = str_replace( $attr_translate, $trans_attributes, $text );
-			$text_trans = wp_targeted_link_rel( $text_trans );
+			// Only call wp_targeted_link_rel on WP < 6.7
+			if( ! $wp_handles_rel )
+			{
+				$text_trans = wp_targeted_link_rel( $text_trans );
+			}
 			return str_replace( $trans_attributes, $attr_translate, $text_trans );
 		}
 
@@ -2693,7 +2703,11 @@ if( ! function_exists( 'avia_targeted_link_rel' ) )
 				case 0;
 					if( true === $exec_call )
 					{
-						$text = wp_targeted_link_rel( $text );
+						// Only call wp_targeted_link_rel on WP < 6.7
+						if( ! $wp_handles_rel )
+						{
+							$text = wp_targeted_link_rel( $text );
+						}
 					}
 					break;
 				default:
