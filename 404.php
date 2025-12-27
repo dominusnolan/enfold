@@ -30,7 +30,7 @@
 
 			<div class='container'>
 
-				<main class='template-page content <?php avia_layout_class( 'content' ); ?> units <?php echo $main_class; ?>' <?php avia_markup_helper( array( 'context' => 'content' ) );?>>
+				<main class='template-page content s <?php avia_layout_class( 'content' ); ?> units <?php echo $main_class; ?>' <?php avia_markup_helper( array( 'context' => 'content' ) );?>>
 
                     <div class="entry entry-content-wrapper clearfix" id='search-fail'>
                     <?php
